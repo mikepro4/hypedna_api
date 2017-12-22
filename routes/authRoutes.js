@@ -4,7 +4,12 @@ module.exports = app => {
 	app.get(
 		"/auth/google",
 		passport.authenticate("google", {
-			scope: ["profile", "email"]
+			scope: [
+				"profile",
+				"email",
+				"https://www.googleapis.com/auth/youtube",
+				"https://www.googleapis.com/auth/youtube.upload"
+			]
 		})
 	);
 
@@ -12,7 +17,7 @@ module.exports = app => {
 		"/auth/google/callback",
 		passport.authenticate("google"),
 		(req, res) => {
-			res.redirect("/");
+			res.redirect("/profile");
 		}
 	);
 
@@ -31,5 +36,6 @@ module.exports = app => {
 
 	app.get("/current_user", (req, res) => {
 		res.send(req.user);
+		console.log(req.user);
 	});
 };

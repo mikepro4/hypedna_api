@@ -26,6 +26,7 @@ app.use(passport.session());
 
 require("./routes/authRoutes")(app);
 require("./routes/userRoutes")(app);
+require("./routes/profileRoutes")(app);
 
 app.get("/", (req, res) => {
 	let adminContent = `
