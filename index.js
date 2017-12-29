@@ -6,6 +6,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const keys = require("./config/keys");
 require("./models/User");
+require("./models/Videos");
 require("./services/passport");
 
 mongoose.Promise = global.Promise;
