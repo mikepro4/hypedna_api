@@ -9,19 +9,54 @@ const YOUTUBE_API_KEY = "AIzaSyDQ_kgowJCa-mH5wnjnQ1mOE4nBqQIGij8";
 
 module.exports = app => {
 	app.post("/youtube_video_details", requireLogin, async (req, res) => {
-		const test = await axios.get(
-			`https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics&id=${
-				req.body.url
-			}&key=${YOUTUBE_API_KEY}`
-		);
+		Video.findOne(
+			{
+				googleId: req.body.googleId
+			},
+			async (err, video) => {
+				if (video) {
+					res.json({
+						newVideo: false,
+						videoDetails: video
+					});
+				} else {
+					const searchReq = await axios.get(
+						`https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics&id=${
+							req.body.googleId
+						}&key=${YOUTUBE_API_KEY}`
+					);
 
-		res.json(test.data);
+					console.log(searchReq.data);
+
+					res.json({
+						newVideo: true,
+						videoDetails: {
+							googleId: searchReq.data.items[0].id,
+							snippet: searchReq.data.items[0].snippet,
+							contentDetails: searchReq.data.items[0].contentDetails
+						}
+					});
+				}
+			}
+		);
 	});
 
 	app.post("/youtube_video_add", requireLogin, async (req, res) => {
-		const video = await new Video({
-			videoId: req.body.url
-		}).save();
-		res.json(video);
+		Video.findOne(
+			{ googleId: req.body.googleId },
+			"googleId",
+			async (err, video) => {
+				if (video) {
+					res.json(video);
+				} else {
+					const video = await new Video({
+						googleId: req.body.googleId,
+						snippet: req.body.snippet,
+						contentDetails: req.body.contentDetails
+					}).save();
+					res.json(video);
+				}
+			}
+		);
 	});
 };

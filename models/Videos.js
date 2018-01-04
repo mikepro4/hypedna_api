@@ -2,7 +2,9 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const videoSchema = new Schema({
-	videoId: String
+	googleId: String,
+	snippet: Object,
+	contentDetails: Object
 });
 
 mongoose.model("videos", videoSchema);
