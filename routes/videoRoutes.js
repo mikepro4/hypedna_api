@@ -59,4 +59,12 @@ module.exports = app => {
 			}
 		);
 	});
+
+	app.post("/hypedna_video_details", async (req, res) => {
+		Video.findOne({ googleId: req.body.googleId }, async (err, video) => {
+			if (video) {
+				res.json(video);
+			}
+		});
+	});
 };
