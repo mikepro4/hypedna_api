@@ -30,6 +30,9 @@ require("./routes/userRoutes")(app);
 require("./routes/profileRoutes")(app);
 require("./routes/videoRoutes")(app);
 
+// Search routes
+require("./routes/searchVideos")(app);
+
 app.get("/", (req, res) => {
 	let adminContent = `
     <div>

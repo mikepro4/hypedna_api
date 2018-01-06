@@ -26,8 +26,6 @@ module.exports = app => {
 						}&key=${YOUTUBE_API_KEY}`
 					);
 
-					console.log(searchReq.data);
-
 					res.json({
 						newVideo: true,
 						videoDetails: {
