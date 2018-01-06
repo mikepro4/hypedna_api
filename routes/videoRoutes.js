@@ -65,4 +65,13 @@ module.exports = app => {
 			}
 		});
 	});
+
+	app.post("/video_delete", async (req, res) => {
+		Video.remove({ googleId: req.body.googleId }, async (err, video) => {
+			if (err) return res.send(err);
+			res.json({
+				message: `deleted  video`
+			});
+		});
+	});
 };
