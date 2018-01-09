@@ -74,4 +74,57 @@ module.exports = app => {
 			});
 		});
 	});
+
+	app.post("/video_track_add", requireLogin, async (req, res) => {
+		const track = {
+			category: req.body.track.category,
+			createdBy: req.user._id
+		};
+		Video.update(
+			{
+				googleId: req.body.googleId
+			},
+			{
+				$push: { tracks: track }
+			},
+			async (err, video) => {
+				if (video) {
+					res.json(video);
+				}
+			}
+		);
+	});
+
+	app.post("/video_track_delete", requireLogin, async (req, res) => {
+		Video.update(
+			{
+				googleId: req.body.googleId
+			},
+			{
+				$pull: { tracks: { _id: req.body.trackId } }
+			},
+			async (err, video) => {
+				if (video) {
+					res.json(video);
+				}
+			}
+		);
+	});
+
+	app.post("/video_track_update", async (req, res) => {
+		Video.update(
+			{
+				googleId: req.body.googleId,
+				tracks: { $elemMatch: { _id: req.body.trackId } }
+			},
+			{
+				$set: { "tracks.$.category": req.body.newTrack }
+			},
+			async (err, video) => {
+				if (video) {
+					res.json(video);
+				}
+			}
+		);
+	});
 };

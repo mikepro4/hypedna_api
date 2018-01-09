@@ -6,7 +6,7 @@ const userSchema = new Schema({
 	accessToken: String,
 	refreshToken: String,
 	profile: Object,
-	credits: Number
+	credits: { type: Number, default: 100 }
 });
 
 mongoose.model("users", userSchema);
