@@ -8,8 +8,9 @@ const clipSchema = new Schema({
 	end: Number,
 	sentiment: String,
 	createdAt: Date,
-	createdBy: UserSchema,
+	createdBy: String,
 	comment: String,
+	name: String,
 	entities: [EntitySchema]
 });
 

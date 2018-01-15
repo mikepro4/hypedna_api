@@ -127,4 +127,53 @@ module.exports = app => {
 			}
 		);
 	});
+
+	app.post("/video_track_clips_update", async (req, res) => {
+		Video.update(
+			{
+				googleId: req.body.googleId,
+				tracks: { $elemMatch: { _id: req.body.trackId } }
+			},
+			{
+				$set: { "tracks.$.clips": req.body.clips }
+			},
+			async (err, video) => {
+				if (video) {
+					res.json(video);
+				} else if (err) {
+					res.send(err);
+				}
+			}
+		);
+	});
+
+	app.post("/get_single_video_track", async (req, res) => {
+		Video.findOne(
+			{
+				googleId: req.body.googleId
+			},
+			{ tracks: { $elemMatch: { _id: req.body.trackId } } },
+			async (err, video) => {
+				if (video) {
+					res.json(video.tracks[0]);
+				} else if (err) {
+					res.send(err);
+				}
+			}
+		);
+	});
+
+	app.post("/get_all_video_tracks", async (req, res) => {
+		Video.findOne(
+			{
+				googleId: req.body.googleId
+			},
+			"tracks",
+			async (err, video) => {
+				if (video) {
+					res.json(video);
+				}
+			}
+		);
+	});
 };

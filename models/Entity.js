@@ -6,7 +6,7 @@ const entitySchema = new Schema({
 	type: String,
 	displayName: String,
 	createdAt: Date,
-	createdBy: UserSchema
+	createdBy: String
 });
 
 module.exports = entitySchema;
