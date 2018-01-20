@@ -1,22 +1,23 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 const propertySchema = require("./Property");
+const entitySchema = require("./Entity");
 
-const entitySchema = new Schema({
+const entityTypeSchema = new Schema({
 	genericProperties: {
-		type: String,
 		displayName: String,
 		createdAt: Date,
 		createdBy: String,
 		imgUrl: String,
-		description: String
+		description: String,
+		topLevel: Boolean
 	},
 	customProperties: [propertySchema],
-	associatedEntityTypes: [
+	parentEntityTypes: [
 		{
 			entityTypeId: String
 		}
 	]
 });
 
-module.exports = entitySchema;
+mongoose.model("entityTypes", entityTypeSchema);

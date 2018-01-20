@@ -7,6 +7,7 @@ const cors = require("cors");
 const keys = require("./config/keys");
 require("./models/User");
 require("./models/Videos");
+require("./models/EntityType");
 require("./services/passport");
 
 mongoose.Promise = global.Promise;
@@ -29,6 +30,7 @@ require("./routes/authRoutes")(app);
 require("./routes/userRoutes")(app);
 require("./routes/profileRoutes")(app);
 require("./routes/videoRoutes")(app);
+require("./routes/entityTypeRoutes")(app);
 
 // Search routes
 require("./routes/searchVideos")(app);
