@@ -10,10 +10,23 @@ const entityTypeSchema = new Schema({
 		createdBy: String,
 		imgUrl: String,
 		description: String,
-		topLevel: Boolean
+		canContainEntities: { type: Boolean, default: false },
+		visible: { type: Boolean, default: false },
+		refs: {
+			root: { type: Boolean, default: false },
+			hasByOfRefs: { type: Boolean, default: false },
+			isRef: { type: Boolean, default: false },
+			isByRef: { type: Boolean, default: false },
+			isOfRef: { type: Boolean, default: false }
+		}
 	},
 	customProperties: [propertySchema],
 	parentEntityTypes: [
+		{
+			entityTypeId: String
+		}
+	],
+	childEntityTypes: [
 		{
 			entityTypeId: String
 		}
