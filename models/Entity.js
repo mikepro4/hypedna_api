@@ -3,15 +3,7 @@ const { Schema } = mongoose;
 const propertySchema = require("./Property");
 
 const entitySchema = new Schema({
-	genericProperties: {
-		type: String,
-		displayName: String,
-		createdAt: Date,
-		createdBy: String,
-		imgUrl: String,
-		description: String
-	},
-	customProperties: [propertySchema],
+	properties: Object,
 	associatedEntityTypes: [
 		{
 			entityTypeId: String
@@ -19,4 +11,17 @@ const entitySchema = new Schema({
 	]
 });
 
-module.exports = entitySchema;
+entitySchema.index({ "properties.displayName": "text" });
+
+const Entity = mongoose.model("Entity", entitySchema);
+
+Entity.ensureIndexes();
+// Entity.on("index", function(err) {
+// 	console.log(err);
+// });
+
+// Entity.collection.dropIndexes(function(err, results) {
+// 	// Handle errors
+// });
+
+mongoose.model("entity", entitySchema);

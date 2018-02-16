@@ -137,6 +137,81 @@ module.exports = app => {
 		);
 	});
 
+	app.post("/add_custom_property", requireLogin, async (req, res) => {
+		EntityType.update(
+			{
+				_id: req.body.id
+			},
+			{
+				$push: {
+					customProperties: req.body.customProperty
+				}
+			},
+			async (err, result) => {
+				if (result) {
+					res.json(result);
+				}
+			}
+		);
+	});
+
+	app.post("/update_custom_property", async (req, res) => {
+		console.log(req.body);
+		EntityType.update(
+			{
+				_id: req.body.id,
+				customProperties: { $elemMatch: { _id: req.body.propertyId } }
+			},
+			{
+				$set: { "customProperties.$": req.body.newValues }
+			},
+			async (err, result) => {
+				if (result) {
+					res.json(result);
+				} else if (err) {
+					res.send(err);
+				}
+			}
+		);
+	});
+
+	app.post("/update_all_custom_properties", async (req, res) => {
+		console.log(req.body);
+		EntityType.update(
+			{
+				_id: req.body.id
+			},
+			{
+				$set: { customProperties: req.body.customProperties }
+			},
+			async (err, result) => {
+				if (result) {
+					res.json(result);
+				} else if (err) {
+					res.send(err);
+				}
+			}
+		);
+	});
+
+	app.post("/remove_custom_property", requireLogin, async (req, res) => {
+		EntityType.update(
+			{
+				_id: req.body.id
+			},
+			{
+				$pull: {
+					customProperties: { _id: req.body.propertyId }
+				}
+			},
+			async (err, result) => {
+				if (result) {
+					res.json(result);
+				}
+			}
+		);
+	});
+
 	app.post("/get_single_entity_type", async (req, res) => {
 		EntityType.findOne(
 			{

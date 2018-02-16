@@ -2,12 +2,19 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const PropertySchema = new Schema({
-	type: String,
-	defaultValue: String,
+	fieldType: String,
 	propertyName: String,
-	value: String,
-	label: String,
-	description: String
+	defaultValue: String,
+	displayName: String,
+	propertyType: String,
+	description: String,
+	entityType: String,
+	dropdownValues: [
+		{
+			valueDisplayName: String,
+			valuePropertyName: String
+		}
+	]
 });
 
 module.exports = PropertySchema;
