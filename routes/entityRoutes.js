@@ -2,11 +2,20 @@ const keys = require("../config/keys");
 const requireLogin = require("../middlewares/requireLogin");
 const axios = require("axios");
 const _ = require("lodash");
-
 const mongoose = require("mongoose");
 const Entity = mongoose.model("entity");
 
 module.exports = app => {
+	app.post("/entity_delete", async (req, res) => {
+		Entity.remove({ _id: req.body.id }, async (err, entity) => {
+			if (err) return res.send(err);
+			res.json({
+				message: `deleted`,
+				info: entity
+			});
+		});
+	});
+
 	app.post("/create_entity", requireLogin, async (req, res) => {
 		const entity = await new Entity({
 			properties: req.body.properties,
@@ -18,6 +27,7 @@ module.exports = app => {
 	app.post("/search/entities", async (req, res) => {
 		const { criteria, sortProperty, offset, limit } = req.body;
 		const query = Entity.find(buildSimpleQuery(criteria))
+			.sort({ [sortProperty]: -1 })
 			.skip(offset)
 			.limit(limit);
 
@@ -43,6 +53,7 @@ module.exports = app => {
 			customProperties
 		} = req.body;
 		const query = Entity.find(buildComplexQuery(criteria, customProperties))
+			.sort({ [sortProperty]: -1 })
 			.skip(offset)
 			.limit(limit);
 
@@ -55,6 +66,34 @@ module.exports = app => {
 				count: results[1],
 				offset: offset,
 				limit: limit
+			});
+		});
+	});
+
+	app.post("/search/get_property_stats", async (req, res) => {
+		const { criteria, property, customProperties } = req.body;
+		let propertyName = "$" + property;
+		let test = "properties." + property;
+		const query = Entity.aggregate(
+			{
+				$match: buildComplexQuery(criteria, customProperties)
+			},
+			{ $project: { ["properties." + property]: 1 } },
+			{
+				$group: {
+					_id: "$properties." + property,
+					count: { $sum: 1 }
+				}
+			}
+		);
+
+		return Promise.all([
+			query,
+			Entity.find(buildComplexQuery(criteria, customProperties)).count()
+		]).then(results => {
+			return res.json({
+				all: results[0],
+				count: results[1]
 			});
 		});
 	});
@@ -182,8 +221,6 @@ const buildComplexQuery = (criteria, customProperties) => {
 		}
 	});
 
-	console.log(query);
-
 	let displayNames = _.map(criteria.displayName, entity => {
 		return entity.label;
 	});
@@ -201,6 +238,8 @@ const buildComplexQuery = (criteria, customProperties) => {
 			$elemMatch: { entityTypeId: criteria.entityType }
 		}
 	});
+
+	console.log(query);
 	return query;
 };
 
