@@ -6,6 +6,19 @@ const mongoose = require("mongoose");
 const Entity = mongoose.model("entity");
 
 module.exports = app => {
+	app.post("/validate_entity_url_name", requireLogin, async (req, res) => {
+		const { entityUrlName } = req.body;
+		return Entity.find(
+			{
+				"properties.entityUrlName": { $eq: entityUrlName }
+			},
+			async (err, result) => {
+				if (!_.isEmpty(result)) return res.status(500).send("Already exists");
+				res.json({ status: "ok" });
+			}
+		);
+	});
+
 	app.post("/entity_delete", async (req, res) => {
 		Entity.remove({ _id: req.body.id }, async (err, entity) => {
 			if (err) return res.send(err);
@@ -225,10 +238,22 @@ const buildComplexQuery = (criteria, customProperties) => {
 		return entity.label;
 	});
 
+	let entityUrlNames = _.map(criteria.entityUrlName, entity => {
+		return entity.label;
+	});
+
 	if (displayNames.length > 0) {
 		_.assign(query, {
 			"properties.displayName": {
 				$in: displayNames
+			}
+		});
+	}
+
+	if (entityUrlNames.length > 0) {
+		_.assign(query, {
+			"properties.entityUrlName": {
+				$in: entityUrlNames
 			}
 		});
 	}
