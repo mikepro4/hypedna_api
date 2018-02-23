@@ -6,6 +6,21 @@ const mongoose = require("mongoose");
 const Entity = mongoose.model("entity");
 
 module.exports = app => {
+	app.post("/entity_load", async (req, res) => {
+		const { entityUrlName } = req.body;
+		const entity = Entity.findOne({
+			"properties.entityUrlName": { $eq: entityUrlName }
+		});
+
+		return Promise.all([entity])
+			.then(results => {
+				return res.json(results[0]);
+			})
+			.catch(error => {
+				throw { error: error };
+			});
+	});
+
 	app.post("/validate_entity_url_name", requireLogin, async (req, res) => {
 		const { entityUrlName } = req.body;
 		return Entity.find(
