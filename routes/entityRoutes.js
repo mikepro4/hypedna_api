@@ -6,6 +6,29 @@ const mongoose = require("mongoose");
 const Entity = mongoose.model("entity");
 
 module.exports = app => {
+	app.post("/entity_update", requireLogin, async (req, res) => {
+		Entity.update(
+			{
+				_id: req.body.id
+			},
+			{
+				$set: req.body.newEntity
+			},
+			async (err, result) => {
+				if (result) {
+					const entity = await Entity.findOne(
+						{
+							_id: req.body.id
+						},
+						(err, result) => {
+							res.json(result);
+						}
+					);
+				}
+			}
+		);
+	});
+
 	app.post("/entity_load", async (req, res) => {
 		const { entityUrlName } = req.body;
 		const entity = Entity.findOne({

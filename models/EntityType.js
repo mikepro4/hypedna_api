@@ -8,7 +8,7 @@ const entityTypeSchema = new Schema({
 		displayName: String,
 		createdAt: Date,
 		createdBy: String,
-		imgUrl: String,
+		imageUrl: String,
 		description: String,
 		canContainEntities: { type: Boolean, default: false },
 		visible: { type: Boolean, default: false },

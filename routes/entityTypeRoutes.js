@@ -1,9 +1,11 @@
 const keys = require("../config/keys");
 const requireLogin = require("../middlewares/requireLogin");
 const axios = require("axios");
+const _ = require("lodash");
 
 const mongoose = require("mongoose");
 const EntityType = mongoose.model("entityTypes");
+const Entity = mongoose.model("entity");
 
 module.exports = app => {
 	app.post("/entity_type_add", requireLogin, async (req, res) => {
@@ -156,7 +158,6 @@ module.exports = app => {
 	});
 
 	app.post("/update_custom_property", async (req, res) => {
-		console.log(req.body);
 		EntityType.update(
 			{
 				_id: req.body.id,
@@ -167,7 +168,30 @@ module.exports = app => {
 			},
 			async (err, result) => {
 				if (result) {
-					res.json(result);
+					let originalPropertyName = _.filter(
+						req.body.originalCustomProperties,
+						property => {
+							return property._id == req.body.propertyId;
+						}
+					);
+					let original = originalPropertyName[0].propertyName;
+
+					Entity.updateMany(
+						{
+							associatedEntityTypes: {
+								$elemMatch: { entityTypeId: req.body.id }
+							}
+						},
+						{
+							$rename: {
+								["properties." + original]:
+									"properties." + req.body.newValues.propertyName
+							}
+						},
+						async (err, result) => {
+							res.json(result);
+						}
+					);
 				} else if (err) {
 					res.send(err);
 				}

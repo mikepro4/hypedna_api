@@ -10,6 +10,7 @@
 	"scripts": {
 		"start": "forever index.js",
 		"server": "nodemon index.js",
+		"heroku-postbuild": "npm install",
 		"dev": "npm run server"
 	},
 	"author": "",
