@@ -11,14 +11,12 @@ const entityTypeSchema = new Schema({
 		imageUrl: String,
 		description: String,
 		canContainEntities: { type: Boolean, default: false },
-		visible: { type: Boolean, default: false },
-		refs: {
-			root: { type: Boolean, default: false },
-			hasByOfRefs: { type: Boolean, default: false },
-			isRef: { type: Boolean, default: false },
-			isByRef: { type: Boolean, default: false },
-			isOfRef: { type: Boolean, default: false }
-		}
+		isHidden: { type: Boolean, default: false },
+		root: { type: Boolean, default: false },
+		hasByOfRefs: { type: Boolean, default: false },
+		isRef: { type: Boolean, default: false },
+		isByRef: { type: Boolean, default: false },
+		isOfRef: { type: Boolean, default: false }
 	},
 	customProperties: [propertySchema],
 	parentEntityTypes: [
