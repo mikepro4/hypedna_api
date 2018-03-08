@@ -5,13 +5,20 @@ const ClipSchema = require("./Clip");
 const EntitySchema = require("./Entity");
 
 const trackSchema = new Schema({
-	entity: EntitySchema,
-	category: String,
-	contributors: [String],
 	createdBy: String,
 	createdAt: Date,
 	status: String,
-	clips: [ClipSchema]
+	clips: [ClipSchema],
+	title: String,
+	description: String,
+	imageUrl: String,
+	references: {
+		rootEntityType: String,
+		ofRefEntityTypeId: String,
+		ofRefEntityId: String,
+		byRefEntityTypeId: String,
+		byRefEntityId: String
+	}
 });
 
 module.exports = trackSchema;

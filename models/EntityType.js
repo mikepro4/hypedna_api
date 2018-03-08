@@ -13,7 +13,8 @@ const entityTypeSchema = new Schema({
 		canContainEntities: { type: Boolean, default: false },
 		isHidden: { type: Boolean, default: false },
 		root: { type: Boolean, default: false },
-		hasByOfRefs: { type: Boolean, default: false },
+		hasByRefs: { type: Boolean, default: false },
+		hasOfRefs: { type: Boolean, default: false },
 		isRef: { type: Boolean, default: false },
 		isByRef: { type: Boolean, default: false },
 		isOfRef: { type: Boolean, default: false }

@@ -9,9 +9,11 @@ const clipSchema = new Schema({
 	sentiment: String,
 	createdAt: Date,
 	createdBy: String,
-	comment: String,
 	name: String,
-	entities: [EntitySchema]
+	comment: String,
+	entities: [EntitySchema],
+	likes: Number,
+	dislikes: Number
 });
 
 module.exports = clipSchema;

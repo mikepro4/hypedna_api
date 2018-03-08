@@ -77,8 +77,11 @@ module.exports = app => {
 
 	app.post("/video_track_add", requireLogin, async (req, res) => {
 		const track = {
-			category: req.body.track.category,
-			createdBy: req.user._id
+			references: req.body.track.references,
+			createdBy: req.user._id,
+			createdAt: new Date(),
+			status: "draft",
+			title: req.body.track.title
 		};
 		Video.update(
 			{
@@ -118,7 +121,7 @@ module.exports = app => {
 				tracks: { $elemMatch: { _id: req.body.trackId } }
 			},
 			{
-				$set: { "tracks.$.category": req.body.newTrack }
+				$set: { "tracks.$": req.body.newTrack }
 			},
 			async (err, video) => {
 				if (video) {
@@ -128,7 +131,7 @@ module.exports = app => {
 		);
 	});
 
-	app.post("/video_track_clips_update", async (req, res) => {
+	app.post("/video_track_clips_update", requireLogin, async (req, res) => {
 		Video.update(
 			{
 				googleId: req.body.googleId,

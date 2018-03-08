@@ -326,5 +326,13 @@ const buildSimpleQuery = criteria => {
 		});
 	}
 
+	if (criteria.entityTypes) {
+		_.assign(query, {
+			associatedEntityTypes: {
+				$elemMatch: { entityTypeId: { $in: criteria.entityTypes } }
+			}
+		});
+	}
+
 	return query;
 };
