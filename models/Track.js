@@ -14,10 +14,12 @@ const trackSchema = new Schema({
 	imageUrl: String,
 	references: {
 		rootEntityType: String,
-		ofRefEntityTypeId: String,
-		ofRefEntityId: String,
-		byRefEntityTypeId: String,
-		byRefEntityId: String
+		entityTypeIds: [],
+		entity: {
+			displayName: String,
+			id: String,
+			imageUrl: String
+		}
 	}
 });
 
