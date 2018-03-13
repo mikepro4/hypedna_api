@@ -6,6 +6,21 @@ const mongoose = require("mongoose");
 const Entity = mongoose.model("entity");
 
 module.exports = app => {
+	app.post("/get_single_entity", async (req, res) => {
+		const { id } = req.body;
+		const entity = Entity.findOne({
+			_id: { $eq: id }
+		});
+
+		return Promise.all([entity])
+			.then(results => {
+				return res.json(results[0]);
+			})
+			.catch(error => {
+				throw { error: error };
+			});
+	});
+
 	app.post("/entity_update", requireLogin, async (req, res) => {
 		Entity.update(
 			{
