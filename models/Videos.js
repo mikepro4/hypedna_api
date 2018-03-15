@@ -5,8 +5,7 @@ const TrackSchema = require("./Track");
 const videoSchema = new Schema({
 	googleId: String,
 	snippet: Object,
-	contentDetails: Object,
-	tracks: [TrackSchema]
+	contentDetails: Object
 });
 
 mongoose.model("videos", videoSchema);

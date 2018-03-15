@@ -4,6 +4,8 @@ const axios = require("axios");
 const _ = require("lodash");
 const mongoose = require("mongoose");
 const Entity = mongoose.model("entity");
+const Video = mongoose.model("videos");
+const Track = mongoose.model("tracks");
 
 module.exports = app => {
 	app.post("/get_single_entity", async (req, res) => {
@@ -36,6 +38,37 @@ module.exports = app => {
 							_id: req.body.id
 						},
 						(err, result) => {
+							Track.updateMany(
+								{
+									"references.ofRefs.entity.id": req.body.id
+								},
+								{
+									$set: {
+										"references.ofRefs.entity": {
+											id: result._id,
+											displayName: result.properties.displayName,
+											imageUrl: result.properties.imageUrl
+										}
+									}
+								},
+								async (err, result) => {}
+							);
+
+							Track.updateMany(
+								{
+									"references.byRefs.entity.id": req.body.id
+								},
+								{
+									$set: {
+										"references.byRefs.entity": {
+											id: result._id,
+											displayName: result.properties.displayName,
+											imageUrl: result.properties.imageUrl
+										}
+									}
+								},
+								async (err, result) => {}
+							);
 							res.json(result);
 						}
 					);

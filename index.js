@@ -32,6 +32,7 @@ require("./routes/profileRoutes")(app);
 require("./routes/videoRoutes")(app);
 require("./routes/entityTypeRoutes")(app);
 require("./routes/entityRoutes")(app);
+require("./routes/trackRoutes")(app);
 
 // Search routes
 require("./routes/searchVideos")(app);

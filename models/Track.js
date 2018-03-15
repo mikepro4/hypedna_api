@@ -5,13 +5,31 @@ const ClipSchema = require("./Clip");
 const EntitySchema = require("./Entity");
 
 const trackSchema = new Schema({
-	createdBy: String,
-	createdAt: Date,
-	status: String,
 	clips: [ClipSchema],
-	title: String,
-	description: String,
-	imageUrl: String,
+	metadata: {
+		createdBy: String,
+		createdAt: Date,
+		customOfInfo: {
+			title: String,
+			description: String,
+			imageUrl: String
+		},
+		video: {
+			videoId: String,
+			channelId: String,
+			channelTitle: String,
+			thumbnails: []
+		},
+		published: { type: Boolean, default: false },
+		approved: { type: Boolean, default: false },
+		version: { type: Number, default: 0 }
+	},
+	statistics: {
+		length: { type: Number, default: 0 },
+		views: { type: Number, default: 0 },
+		likes: { type: Number, default: 0 },
+		dislikes: { type: Number, default: 0 }
+	},
 	references: {
 		rootEntityType: String,
 		ofRefs: {
@@ -32,5 +50,7 @@ const trackSchema = new Schema({
 		}
 	}
 });
+
+mongoose.model("tracks", trackSchema);
 
 module.exports = trackSchema;
