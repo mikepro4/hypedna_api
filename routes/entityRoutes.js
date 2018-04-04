@@ -115,12 +115,24 @@ module.exports = app => {
 		});
 	});
 
-	app.post("/create_entity", requireLogin, async (req, res) => {
+	app.post("/create_entity", async (req, res) => {
 		const entity = await new Entity({
 			properties: req.body.properties,
 			associatedEntityTypes: req.body.associatedEntityTypes
 		}).save();
 		res.json(entity);
+	});
+
+	app.post("/create_many_entities", async (req, res) => {
+		Entity.insertMany(req.body.entities,
+			async (err, result) => {
+				if (err) return res.json({error: "true", info: err});
+				res.json({
+					success:"true",
+					info: result
+				})
+			}
+		)
 	});
 
 	app.post("/search/entities", async (req, res) => {

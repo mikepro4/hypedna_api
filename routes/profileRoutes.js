@@ -9,7 +9,6 @@ module.exports = app => {
 
 		oauth2Client.credentials = {
 			access_token: req.user.accessToken,
-			refresh_token: req.user.refreshToken
 		};
 
 		google
