@@ -4,6 +4,7 @@ const propertySchema = require("./Property");
 const entitySchema = require("./Entity");
 
 const entityTypeSchema = new Schema({
+	created:  {type: Date, default: Date.now},
 	genericProperties: {
 		displayName: String,
 		createdAt: Date,

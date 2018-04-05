@@ -3,6 +3,7 @@ const { Schema } = mongoose;
 const propertySchema = require("./Property");
 
 const entitySchema = new Schema({
+	created:  {type: Date, default: Date.now},
 	properties: Object,
 	associatedEntityTypes: [
 		{

@@ -5,6 +5,7 @@ const ClipSchema = require("./Clip");
 const EntitySchema = require("./Entity");
 
 const trackSchema = new Schema({
+	created: {type: Date, default: Date.now},
 	clips: [ClipSchema],
 	metadata: {
 		createdBy: String,

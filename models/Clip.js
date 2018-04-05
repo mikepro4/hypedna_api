@@ -13,7 +13,8 @@ const clipSchema = new Schema({
 	comment: String,
 	entities: [EntitySchema],
 	likes: Number,
-	dislikes: Number
+	dislikes: Number,
+	created:  {type: Date, default: Date.now},
 });
 
 module.exports = clipSchema;
