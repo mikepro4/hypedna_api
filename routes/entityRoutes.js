@@ -357,22 +357,8 @@ const buildComplexQuery = (criteria, customProperties) => {
 		});
 	}
 
-	// _.assign(query, {
-	// 	associatedEntityTypes: {
-	// 		$elemMatch: { entityTypeId: criteria.entityType }
-	// 	}
-	// });
-
-	// if (criteria.entityType) {
-	// 	_.assign(query, {
-	// 		associatedEntityTypes: {
-	// 			$elemMatch: { entityTypeId: criteria.entityType }
-	// 		}
-	// 	});
-	// }
-
 	_.assign(query, {
-		"associatedEntityTypes.0.entityTypeId": criteria.entityType
+		"associatedEntityType": criteria.entityType
 	})
 
 	console.log(query);
