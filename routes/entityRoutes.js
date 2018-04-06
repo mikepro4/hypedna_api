@@ -46,7 +46,7 @@ module.exports = app => {
 									$set: {
 										"references.ofRefs.entity": {
 											id: result._id,
-											displayName: result.properties.displayName,
+											displayName: result.created,
 											imageUrl: result.properties.imageUrl
 										}
 									}
@@ -62,7 +62,7 @@ module.exports = app => {
 									$set: {
 										"references.byRefs.entity": {
 											id: result._id,
-											displayName: result.properties.displayName,
+											displayName: result.created,
 											imageUrl: result.properties.imageUrl
 										}
 									}
@@ -138,13 +138,13 @@ module.exports = app => {
 	app.post("/search/entities", async (req, res) => {
 		const { criteria, sortProperty, offset, limit } = req.body;
 		const query = Entity.find(buildSimpleQuery(criteria))
-			.sort({ [sortProperty]: -1 })
+			.sort({ [sortProperty]: 1 })
 			.skip(offset)
 			.limit(limit);
 
 		return Promise.all([
 			query,
-			Entity.find(buildSimpleQuery(criteria)).count()
+			Entity.find(buildSimpleQuery(criteria)).sort({ [sortProperty]: 1 }).count()
 		]).then(results => {
 			return res.json({
 				all: results[0],
@@ -163,14 +163,15 @@ module.exports = app => {
 			limit,
 			customProperties
 		} = req.body;
+		console.log(sortProperty)
 		const query = Entity.find(buildComplexQuery(criteria, customProperties))
-			.sort({ [sortProperty]: -1 })
+			.sort({ [sortProperty]: 1 })
 			.skip(offset)
 			.limit(limit);
 
 		return Promise.all([
 			query,
-			Entity.find(buildComplexQuery(criteria, customProperties)).count()
+			Entity.find(buildComplexQuery(criteria, customProperties)).sort({ [sortProperty]: 1 }).count()
 		]).then(results => {
 			return res.json({
 				all: results[0],
@@ -342,7 +343,7 @@ const buildComplexQuery = (criteria, customProperties) => {
 
 	if (displayNames.length > 0) {
 		_.assign(query, {
-			"properties.displayName": {
+			"created": {
 				$in: displayNames
 			}
 		});
@@ -356,11 +357,23 @@ const buildComplexQuery = (criteria, customProperties) => {
 		});
 	}
 
+	// _.assign(query, {
+	// 	associatedEntityTypes: {
+	// 		$elemMatch: { entityTypeId: criteria.entityType }
+	// 	}
+	// });
+
+	// if (criteria.entityType) {
+	// 	_.assign(query, {
+	// 		associatedEntityTypes: {
+	// 			$elemMatch: { entityTypeId: criteria.entityType }
+	// 		}
+	// 	});
+	// }
+
 	_.assign(query, {
-		associatedEntityTypes: {
-			$elemMatch: { entityTypeId: criteria.entityType }
-		}
-	});
+		"associatedEntityTypes.0.entityTypeId": criteria.entityType
+	})
 
 	console.log(query);
 	return query;
@@ -371,18 +384,24 @@ const buildSimpleQuery = criteria => {
 
 	if (criteria.displayName) {
 		_.assign(query, {
-			"properties.displayName": {
+			"created": {
 				$regex: new RegExp(criteria.displayName),
 				$options: "i"
 			}
 		});
 	}
 
+	// if (criteria.entityType) {
+	// 	_.assign(query, {
+	// 		associatedEntityTypes: {
+	// 			$elemMatch: { entityTypeId: criteria.entityType }
+	// 		}
+	// 	});
+	// }
+
 	if (criteria.entityType) {
 		_.assign(query, {
-			associatedEntityTypes: {
-				$elemMatch: { entityTypeId: criteria.entityType }
-			}
+			"associatedEntityTypes.$.entityTypeId": criteria.entityType
 		});
 	}
 
