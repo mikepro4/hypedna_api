@@ -3,7 +3,7 @@ const { Schema } = mongoose;
 const propertySchema = require("./Property");
 
 const entitySchema = new Schema({
-	created:  {type: Date, default: Date.now},
+	created: { type: Date, default: Date.now },
 	properties: Object,
 	associatedEntityType: String,
 	associatedEntityTypes: [
@@ -14,27 +14,29 @@ const entitySchema = new Schema({
 });
 
 entitySchema.index({
-	"properties.displayName": "text",
+	"properties.displayName": "text"
 });
 
 entitySchema.index({
-	"associatedEntityType": 1,
+	associatedEntityType: 1
+});
+
+entitySchema.index({
+	"properties.displayName": 1
 });
 
 entitySchema.index({
 	"properties.displayName": 1,
+	associatedEntityType: 1,
+	_id: 1
 });
 
 entitySchema.index({
-	"created": 1,
+	created: 1
 });
 
 entitySchema.index({
 	"properties.entityUrlName": 1
-});
-
-entitySchema.index({
-	"associatedEntityTypes.entityTypeId": 1
 });
 
 const Entity = mongoose.model("Entity", entitySchema);

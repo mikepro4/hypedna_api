@@ -46,7 +46,7 @@ module.exports = app => {
 									$set: {
 										"references.ofRefs.entity": {
 											id: result._id,
-											displayName: result.created,
+											displayName: result.properties.displayName,
 											imageUrl: result.properties.imageUrl
 										}
 									}
@@ -62,7 +62,7 @@ module.exports = app => {
 									$set: {
 										"references.byRefs.entity": {
 											id: result._id,
-											displayName: result.created,
+											displayName: result.properties.displayName,
 											imageUrl: result.properties.imageUrl
 										}
 									}
@@ -124,33 +124,29 @@ module.exports = app => {
 	});
 
 	app.post("/create_many_entities", async (req, res) => {
-		Entity.insertMany(req.body.entities,
-			async (err, result) => {
-				if (err) return res.json({error: "true", info: err});
-				res.json({
-					success:"true",
-					info: result
-				})
-			}
-		)
+		Entity.insertMany(req.body.entities, async (err, result) => {
+			if (err) return res.json({ error: "true", info: err });
+			res.json({
+				success: "true",
+				info: result
+			});
+		});
 	});
 
 	app.post("/search/entities", async (req, res) => {
 		const { criteria, sortProperty, offset, limit } = req.body;
-		const query = Entity.find(buildSimpleQuery(criteria))
+		const query = Entity.find(buildSimpleQuery(criteria), {
+			"properties.displayName": 1,
+			_id: 1,
+			associatedEntityType: 1
+		})
 			.sort({ [sortProperty]: 1 })
 			.skip(offset)
 			.limit(limit);
 
-		return Promise.all([
-			query,
-			Entity.find(buildSimpleQuery(criteria)).sort({ [sortProperty]: 1 }).count()
-		]).then(results => {
+		return Promise.all([query]).then(results => {
 			return res.json({
-				all: results[0],
-				count: results[1],
-				offset: offset,
-				limit: limit
+				all: results[0]
 			});
 		});
 	});
@@ -163,7 +159,7 @@ module.exports = app => {
 			limit,
 			customProperties
 		} = req.body;
-		console.log(sortProperty)
+		console.log(sortProperty);
 		const query = Entity.find(buildComplexQuery(criteria, customProperties))
 			.sort({ [sortProperty]: 1 })
 			.skip(offset)
@@ -171,7 +167,9 @@ module.exports = app => {
 
 		return Promise.all([
 			query,
-			Entity.find(buildComplexQuery(criteria, customProperties)).sort({ [sortProperty]: 1 }).count()
+			Entity.find(buildComplexQuery(criteria, customProperties))
+				.sort({ [sortProperty]: 1 })
+				.count()
 		]).then(results => {
 			return res.json({
 				all: results[0],
@@ -343,7 +341,7 @@ const buildComplexQuery = (criteria, customProperties) => {
 
 	if (displayNames.length > 0) {
 		_.assign(query, {
-			"created": {
+			"properties.displayName": {
 				$in: displayNames
 			}
 		});
@@ -358,8 +356,8 @@ const buildComplexQuery = (criteria, customProperties) => {
 	}
 
 	_.assign(query, {
-		"associatedEntityType": criteria.entityType
-	})
+		associatedEntityType: criteria.entityType
+	});
 
 	console.log(query);
 	return query;
@@ -370,8 +368,8 @@ const buildSimpleQuery = criteria => {
 
 	if (criteria.displayName) {
 		_.assign(query, {
-			"created": {
-				$regex: new RegExp(criteria.displayName),
+			"properties.displayName": {
+				$regex: new RegExp("^" + criteria.displayName),
 				$options: "i"
 			}
 		});
@@ -387,9 +385,15 @@ const buildSimpleQuery = criteria => {
 
 	if (criteria.entityType) {
 		_.assign(query, {
-			"associatedEntityTypes.$.entityTypeId": criteria.entityType
+			associatedEntityType: criteria.entityType
 		});
 	}
+
+	// if (criteria.displayName) {
+	// 	_.assign(query, {
+	// 		 $text: { $search: criteria.displayName }
+	// 	});
+	// }
 
 	if (criteria.entityTypes) {
 		_.assign(query, {
@@ -398,6 +402,8 @@ const buildSimpleQuery = criteria => {
 			}
 		});
 	}
+
+	console.log(query);
 
 	return query;
 };
