@@ -7,7 +7,8 @@ const OAuth2 = google.auth.OAuth2;
 const mongoose = require("mongoose");
 const Video = mongoose.model("videos");
 
-const YOUTUBE_API_KEY = "AIzaSyDQ_kgowJCa-mH5wnjnQ1mOE4nBqQIGij8";
+// const YOUTUBE_API_KEY = "AIzaSyDQ_kgowJCa-mH5wnjnQ1mOE4nBqQIGij8";
+const YOUTUBE_API_KEY = "AIzaSyBB3-2_SzXX_N_I_udW_o2PUzfS07hpZl8"
 
 module.exports = app => {
 
@@ -130,6 +131,9 @@ module.exports = app => {
 				googleId: req.body.googleId
 			},
 			async (err, video) => {
+				if(err) {
+					console.log(err)
+				}
 				if (video) {
 					res.json({
 						newVideo: false,

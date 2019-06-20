@@ -137,6 +137,7 @@ module.exports = app => {
 		const { criteria, sortProperty, offset, limit } = req.body;
 		const query = Entity.find(buildSimpleQuery(criteria), {
 			"properties.displayName": 1,
+			"properties.entityUrlName": 1,
 			_id: 1,
 			associatedEntityType: 1
 		})
@@ -165,12 +166,14 @@ module.exports = app => {
 			.skip(offset)
 			.limit(limit);
 
+
 		return Promise.all([
 			query,
 			Entity.find(buildComplexQuery(criteria, customProperties))
 				.sort({ [sortProperty]: 1 })
 				.count()
-		]).then(results => {
+		]).then((results,err) => {
+			console.log(results[0])
 			return res.json({
 				all: results[0],
 				count: results[1],
@@ -356,7 +359,9 @@ const buildComplexQuery = (criteria, customProperties) => {
 	}
 
 	_.assign(query, {
-		associatedEntityType: criteria.entityType
+		associatedEntityTypes: {
+			$elemMatch: { entityTypeId: { $eq: criteria.entityType } }
+		}
 	});
 
 	console.log(query);
@@ -385,7 +390,9 @@ const buildSimpleQuery = criteria => {
 
 	if (criteria.entityType) {
 		_.assign(query, {
-			associatedEntityType: criteria.entityType
+			associatedEntityTypes: {
+				$elemMatch: { entityTypeId: { $eq: criteria.entityType } }
+			}
 		});
 	}
 
